@@ -14,10 +14,33 @@ uint64_t convertToUint64 (double number) {
     return *((uint64_t *)(&number));
 }
 
-bool getBit (const uint64_t number, const uint8_t index) {
+bool getBit (const int64_t number, const uint8_t index) {
     /// Your code here...
+    uint64_t mask = 1 << index;
+    uint64_t temp = mask & number;
+    temp >>= index;
+    return temp;
 }
 
+bool sign (const uint64_t number) {
+    return getBit(number, 63);
+}
+
+bool isAll (const uint64_t number, uint8_t start, uint8_t end, uint8_t check_num) {
+    for (uint8_t i = start; i >= end; i--){
+        if (getBit(number, i) != check_num)
+            return false;
+    }
+    return true;
+}
+
+bool checkNormal (const uint64_t number) {
+    return !isAll(number, 62, 52, 0) && !isAll(number, 62, 52, 1);
+}
+
+bool checkDenormal (const uint64_t number) {
+    return isAll(number, 62, 52, 0) && getBit(number, 0);
+}
 
 /**
  * Checkers here:
@@ -25,6 +48,7 @@ bool getBit (const uint64_t number, const uint8_t index) {
 
 bool checkForPlusZero (uint64_t number) {
     /// Your code here.
+    return number == 0x0000000000000000;
 }
 
 bool checkForMinusZero (uint64_t number) {
@@ -33,34 +57,42 @@ bool checkForMinusZero (uint64_t number) {
 
 bool checkForPlusInf (uint64_t number) {
     /// Your code here.
+    return number == 0x7FF0000000000000;
 }
 
 bool checkForMinusInf (uint64_t number) {
     /// Your code here.
+    return number == 0xFFF0000000000000;
 }
 
 bool checkForPlusNormal (uint64_t number) {
     /// Your code here.
+    return !sign(number) && checkNormal(number);
 }
 
 bool checkForMinusNormal (uint64_t number) {
     /// Your code here.
+    return sign(number) && checkNormal(number);
 }
 
 bool checkForPlusDenormal (uint64_t number) {
     /// Your code here.
+    return !sign(number) && checkDenormal(number);
 }
 
 bool checkForMinusDenormal (uint64_t number) {
     /// Your code here.
+    return sign(number) && checkDenormal(number);
 }
 
 bool checkForSignalingNan (uint64_t number) {
     /// Your code here.
+    return isAll(number, 62, 52, 1) && !getBit(number, 51) && !isAll(number, 50, 0, 0);
 }
 
 bool checkForQuietNan (uint64_t number) {
     /// Your code here.
+    return isAll(number, 62, 52, 1) && getBit(number, 51);
 }
 
 
