@@ -14,7 +14,7 @@ uint64_t convertToUint64 (double number) {
     return *((uint64_t *)(&number));
 }
 
-bool getBit (const int64_t number, const uint8_t index) {
+bool getBit (const uint64_t number, const uint8_t index) {
     /// Your code here...
     uint64_t mask = 1 << index;
     uint64_t temp = mask & number;
@@ -26,20 +26,21 @@ bool sign (const uint64_t number) {
     return getBit(number, 63);
 }
 
-bool isAll (const uint64_t number, uint8_t start, uint8_t end, uint8_t check_num) {
-    for (uint8_t i = start; i >= end; i--){
-        if (getBit(number, i) != check_num)
-            return false;
-    }
-    return true;
+bool isAllExponent (const uint64_t number, uint8_t check_num) {
+    uint64_t exponent = 0x7FF0000000000000;
+    uint64_t temp = number & exponent;
+    if check_num
+        return temp == exponent;
+    else
+        return temp == 0x0000000000000000;
 }
 
 bool checkNormal (const uint64_t number) {
-    return !isAll(number, 62, 52, 0) && !isAll(number, 62, 52, 1);
+    return !isAllExponent(number, 0) && !isAllExponent(number, 1);
 }
 
 bool checkDenormal (const uint64_t number) {
-    return isAll(number, 62, 52, 0) && getBit(number, 0);
+    return isAllExponent(number, 0) && getBit(number, 0);
 }
 
 /**
@@ -87,12 +88,12 @@ bool checkForMinusDenormal (uint64_t number) {
 
 bool checkForSignalingNan (uint64_t number) {
     /// Your code here.
-    return isAll(number, 62, 52, 1) && !getBit(number, 51) && !isAll(number, 50, 0, 0);
+    return isAllExponent(number, 1) && !getBit(number, 51) && (number<<12) != 0x0000000000000000;
 }
 
 bool checkForQuietNan (uint64_t number) {
     /// Your code here.
-    return isAll(number, 62, 52, 1) && getBit(number, 51);
+    return isAllExponent(number, 1) && getBit(number, 51);
 }
 
 
