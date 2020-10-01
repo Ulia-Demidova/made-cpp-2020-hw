@@ -1,7 +1,8 @@
-.text
+.textш
 .global count_det
 
 count_det:
+        push {r4-r10}
         ldr r1, [r0], #4
         ldr r2, [r0], #4
         ldr r3, [r0], #4
@@ -30,5 +31,7 @@ count_det:
         add r0, r2
         add r0, r4
         sub r0, r0, r3
+
+        pop {r4-r10}
 
         bx lr
