@@ -6,7 +6,17 @@ typedef std::function<int (int)> Op;
 
 
 Op compose (size_t n, Op ops[]) {
-    /// Your code goes here.
+    if (n == 0) {
+        return [] (int x) {return x;};
+    }
+    if (n == 1)
+        return ops[0];
+
+    Op result_func = [n, ops] (int x) {
+        return  compose(n - 1, ops)(ops[n - 1](x));
+    };
+
+    return result_func;
 }
 
 
