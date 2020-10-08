@@ -51,16 +51,17 @@ vector<double> operator% (const vector<double>& a, const vector<double>& b){
 }
 
 bool operator|| (const vector<double>& a, const vector<double>& b){
-    double k = a[0] / b[0];
+    const double eps = 1e-7;
+    
     for (size_t i = 1; i < a.size(); ++i){
-        if (a[i] - k * b[i] > 1e-7)
+        if (a[i] * b[0] - a[0] * b[i] > eps)
             return false;
     }
     return true;
 }
 
 bool operator&& (const vector<double>& a, const vector<double>& b){
-    if ((a || b) && (a[0] / b[0]) >= 0)
+    if ((a || b) && (a[0] * b[0]) >= 0)
         return true;
     return false;
 }
