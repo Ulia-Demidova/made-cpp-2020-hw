@@ -90,17 +90,17 @@ void reverse(vector<double> &a) {
 }
 
 vector<int> operator|(const vector<int> &a, const vector<int> &b) {
-  vector<int> c;
+  vector<int> c(a.size());
   for (size_t i = 0; i < a.size(); ++i) {
-    c.push_back(a[i] | b[i]);
+    c[i] = a[i] | b[i];
   }
   return c;
 }
 
 vector<int> operator&(const vector<int> &a, const vector<int> &b) {
-  vector<int> c;
+  vector<int> c(a.size());
   for (size_t i = 0; i < a.size(); ++i) {
-    c.push_back(a[i] & b[i]);
+    c[i] = a[i] & b[i];
   }
   return c;
 }
