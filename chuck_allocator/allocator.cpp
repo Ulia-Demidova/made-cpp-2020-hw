@@ -52,12 +52,12 @@ public:
     instances_count++;
     return *this;
   }
-  T *allocate(std::size_t n) {
+  pointer allocate(std::size_t n) {
     if (n > capacity)
       return nullptr;
 
     if (chunk_ptr == nullptr) {
-      chunk_ptr = new Chunk<T>(capacity);
+      chunk_ptr = new Chunk<value_type>(capacity);
     }
 
     Chunk<T> *p = chunk_ptr;
@@ -68,17 +68,17 @@ public:
         return p->ptr + prev_size;
       } else {
         if (p->next == nullptr) {
-          p->next = new Chunk<T>(capacity);
+          p->next = new Chunk<value_type>(capacity);
         }
         p = p->next;
       }
     }
   }
 
-  void deallocate(T *p, std::size_t n) {}
+  void deallocate(pointer p, std::size_t n) {}
 
-  template <typename... Args> void construct(T *p, const Args &&... args) {
-    new (p) T(args...);
+  template <typename... Args> void construct(pointer p, Args &&... args) {
+    new (p) T(std::forward<Args>(args)...);
   }
   void destroy(T *p) { p->~T(); }
 };
